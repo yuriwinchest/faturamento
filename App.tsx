@@ -54,7 +54,7 @@ function App() {
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/20 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-600/10 rounded-full blur-[120px] pointer-events-none" />
 
-      <div className="relative z-10 max-w-7xl mx-auto p-6 md:p-10 space-y-10">
+      <div className="relative z-10 max-w-[1600px] mx-auto p-6 md:p-10 space-y-10">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-end gap-6 border-b border-slate-800/60 pb-8">
           <div>
@@ -87,8 +87,8 @@ function App() {
             <button
               onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
               className={`px-4 py-2 rounded-xl text-xs font-semibold border transition-all shadow-lg ${sidebarCollapsed
-                  ? 'bg-slate-800 text-white border-slate-600 hover:bg-slate-700'
-                  : 'bg-slate-900 text-slate-300 border-slate-700 hover:bg-slate-800'
+                ? 'bg-slate-800 text-white border-slate-600 hover:bg-slate-700'
+                : 'bg-slate-900 text-slate-300 border-slate-700 hover:bg-slate-800'
                 }`}
               title={sidebarCollapsed ? 'Expandir lateral' : 'Recolher lateral'}
             >

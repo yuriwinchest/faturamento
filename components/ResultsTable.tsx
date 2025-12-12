@@ -189,7 +189,7 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ results, onDelete, onUpdate
   if (results.length === 0) return null;
 
   return (
-    <div className="bg-[#030712]/80 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/5 overflow-hidden ring-1 ring-white/5">
+    <div className="bg-[#030712]/80 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/5 overflow-visible ring-1 ring-white/5 w-full">
       {/* Toolbar */}
       <div className="px-6 py-6 border-b border-white/5 bg-[#030712]/50 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
