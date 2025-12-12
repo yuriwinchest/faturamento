@@ -47,7 +47,7 @@ function App() {
   const errorCount = results.filter(r => r.status !== 'READY').length;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 relative overflow-hidden selection:bg-cyan-500/30 selection:text-cyan-200">
+    <div className="min-h-screen bg-slate-950 text-slate-200 relative overflow-x-hidden selection:bg-cyan-500/30 selection:text-cyan-200">
       
       {/* Background Decorative Blobs */}
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/20 rounded-full blur-[120px] pointer-events-none" />

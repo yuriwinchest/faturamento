@@ -255,7 +255,7 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ results, onDelete, onUpdate
                   <td className="px-6 py-4 whitespace-nowrap text-xs text-slate-400 max-w-[200px] truncate" title={item.details}>
                     {item.details}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-white tracking-wide">
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-slate-200 tracking-wide">
                     {item.calculatedAmount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">

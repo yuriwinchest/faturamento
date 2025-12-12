@@ -100,7 +100,7 @@ const DataInputSection: React.FC<DataInputSectionProps> = ({ onDataLoaded }) => 
   };
 
   return (
-    <div className="bg-slate-900/60 backdrop-blur-xl p-6 rounded-3xl shadow-xl border border-slate-700/50 flex flex-col h-full">
+    <div className="bg-slate-900/60 backdrop-blur-xl p-6 rounded-3xl shadow-xl border border-slate-700/50 flex flex-col">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-bold text-white tracking-wide">1. Importação</h2>
         <div className="flex gap-2">
@@ -136,7 +136,7 @@ const DataInputSection: React.FC<DataInputSectionProps> = ({ onDataLoaded }) => 
         </button>
       </div>
 
-      <div className="flex-1 flex flex-col space-y-4 mb-6 min-h-[300px]">
+      <div className="flex flex-col space-y-4 mb-6">
         
         {/* Drop Zone */}
         <div 
@@ -174,14 +174,14 @@ const DataInputSection: React.FC<DataInputSectionProps> = ({ onDataLoaded }) => 
         </div>
 
         {/* Text Area (Preview/Edit) */}
-        <div className="flex-1 relative animate-fadeIn">
+        <div className="relative animate-fadeIn">
           <div className="absolute top-3 right-3 z-10">
              <span className="text-[10px] font-mono text-slate-500 bg-slate-900/80 px-2 py-1 rounded border border-slate-800">
                {activeTab === 'soc' ? 'CNPJ, Nome, Ativos' : 'CNPJ, Regra, Preços...'}
              </span>
           </div>
           <textarea
-            className="w-full h-full min-h-[150px] p-4 bg-slate-950 border border-slate-800 rounded-2xl font-mono text-xs md:text-sm text-slate-300 focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 transition-all outline-none resize-none placeholder-slate-700"
+            className="w-full min-h-[150px] p-4 bg-slate-950 border border-slate-800 rounded-2xl font-mono text-xs md:text-sm text-slate-300 focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 transition-all outline-none resize-none placeholder-slate-700"
             placeholder={activeTab === 'soc' ? "Cole os dados ou use o upload acima..." : "Cole as regras ou use o upload acima..."}
             value={activeTab === 'soc' ? socText : pricingText}
             onChange={(e) => activeTab === 'soc' ? setSocText(e.target.value) : setPricingText(e.target.value)}
