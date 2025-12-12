@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, Fragment } from 'react';
 import { BillingResult } from '../types';
 import { utils, writeFile } from 'xlsx';
 
@@ -20,30 +20,19 @@ const getRuleLabel = (model?: string) => {
   }
 };
 
-const StatusBadge = ({ status, details }: { status: string, details: string }) => {
+const StatusBadge = ({ status }: { status: string }) => {
   const isReady = status === 'READY';
-  const tooltipText = isReady 
-    ? "Cálculo realizado com sucesso" 
-    : (details || "Erro desconhecido");
-
+  
   return (
-    <div className="group relative flex items-center w-fit">
-      <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold cursor-help transition-all border ${
+    <div className="flex items-center w-fit">
+      <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold transition-all border ${
         isReady 
-          ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20 hover:shadow-[0_0_10px_rgba(52,211,153,0.3)]' 
-          : 'bg-rose-500/10 text-rose-400 border-rose-500/20 hover:bg-rose-500/20 hover:shadow-[0_0_10px_rgba(251,113,133,0.3)]'
+          ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' 
+          : 'bg-rose-500/10 text-rose-400 border-rose-500/20'
       }`}>
         <span className={`w-1.5 h-1.5 rounded-full mr-2 ${isReady ? 'bg-emerald-400' : 'bg-rose-400'}`}></span>
         {isReady ? 'Pronto' : 'Erro'}
       </span>
-      
-      {/* Tooltip */}
-      <div className="absolute left-full top-1/2 -translate-y-1/2 ml-3 hidden group-hover:block z-50 w-max max-w-[250px] animate-fadeIn">
-        <div className="bg-slate-800 text-slate-200 text-xs rounded-lg py-2 px-3 shadow-xl border border-slate-700 relative">
-          <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-slate-800"></div>
-          {tooltipText}
-        </div>
-      </div>
     </div>
   );
 };
@@ -60,17 +49,35 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ results, onDelete, onUpdate
   const [editingCnpj, setEditingCnpj] = useState<string | null>(null);
   const [editValue, setEditValue] = useState<number>(0);
 
-  const startEditing = (item: BillingResult) => {
+  // State for row expansion
+  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+
+  const toggleRow = (cnpj: string) => {
+    setExpandedRows(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(cnpj)) {
+        newSet.delete(cnpj);
+      } else {
+        newSet.add(cnpj);
+      }
+      return newSet;
+    });
+  };
+
+  const startEditing = (e: React.MouseEvent, item: BillingResult) => {
+    e.stopPropagation();
     setEditingCnpj(item.socData.cnpj);
     setEditValue(item.socData.activeEmployees);
   };
 
-  const cancelEditing = () => {
+  const cancelEditing = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
     setEditingCnpj(null);
     setEditValue(0);
   };
 
-  const saveEditing = () => {
+  const saveEditing = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
     if (editingCnpj) {
       onUpdate(editingCnpj, editValue);
       setEditingCnpj(null);
@@ -244,7 +251,7 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ results, onDelete, onUpdate
                 Regra
               </th>
               <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">
-                Detalhes do Cálculo
+                Resumo
               </th>
               <HeaderCell label="Total" sortKey="calculatedAmount" align="right" />
               <th className="px-6 py-4 text-center text-xs font-bold text-slate-400 uppercase tracking-wider">
@@ -255,110 +262,164 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ results, onDelete, onUpdate
           <tbody className="divide-y divide-slate-800/50">
             {processedResults.map((item, idx) => {
               const isEditing = editingCnpj === item.socData.cnpj;
+              const isExpanded = expandedRows.has(item.socData.cnpj);
+              const rowId = item.socData.cnpj;
               
               return (
-                <tr 
-                  key={`${item.socData.cnpj}-${idx}`} 
-                  className={`transition-colors duration-200 ${
-                    item.status !== 'READY' 
-                      ? 'bg-rose-900/5 hover:bg-rose-900/10' 
-                      : 'hover:bg-slate-800/30'
-                  }`}
-                >
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <StatusBadge status={item.status} details={item.details} />
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-white">{item.socData.companyName}</div>
-                    <div className="text-xs text-slate-500 font-mono mt-0.5">{item.socData.cnpj}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-300">
-                    {isEditing ? (
-                      <div className="flex items-center">
-                        <input 
-                          type="number"
-                          min="0"
-                          className="w-20 p-1.5 bg-slate-950 border border-cyan-500 rounded-lg focus:outline-none focus:ring-1 focus:ring-cyan-400 text-right text-white font-mono"
-                          value={editValue}
-                          onChange={(e) => setEditValue(parseInt(e.target.value) || 0)}
-                          onKeyDown={(e) => {
-                            if(e.key === 'Enter') saveEditing();
-                            if(e.key === 'Escape') cancelEditing();
-                          }}
-                          autoFocus
-                        />
+                <Fragment key={`${rowId}-${idx}`}>
+                  <tr 
+                    onClick={() => toggleRow(rowId)}
+                    className={`group transition-all duration-200 cursor-pointer border-b border-slate-800/50 last:border-0 ${
+                      isExpanded 
+                        ? 'bg-slate-800/60' 
+                        : item.status !== 'READY'
+                          ? 'bg-rose-900/5 hover:bg-rose-900/10'
+                          : 'hover:bg-slate-800/40'
+                    }`}
+                  >
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center gap-3">
+                         {/* Chevron Icon */}
+                        <div className={`transition-transform duration-300 text-slate-500 ${isExpanded ? 'rotate-180 text-cyan-400' : 'rotate-0 group-hover:text-slate-300'}`}>
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                        </div>
+                        <StatusBadge status={item.status} />
                       </div>
-                    ) : (
-                      <span className="font-mono">{item.socData.activeEmployees}</span>
-                    )}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`text-xs font-mono px-2 py-1 rounded border ${
-                      item.pricingRule 
-                        ? 'bg-indigo-500/10 text-indigo-300 border-indigo-500/20' 
-                        : 'bg-slate-800 text-slate-500 border-slate-700'
-                    }`}>
-                      {getRuleLabel(item.pricingRule?.model)}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-xs text-slate-400 max-w-[250px] truncate" title={item.details}>
-                    {item.details}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-slate-200 tracking-wide">
-                    {item.calculatedAmount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                    {isEditing ? (
-                       <div className="flex justify-center items-center space-x-2">
-                        <button 
-                          onClick={saveEditing}
-                          className="p-2 bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 rounded-lg transition-colors border border-emerald-500/30"
-                          title="Salvar"
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                        </button>
-                        <button 
-                          onClick={cancelEditing}
-                          className="p-2 bg-slate-700/50 text-slate-400 hover:bg-slate-700 rounded-lg transition-colors border border-slate-600"
-                          title="Cancelar"
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                        </button>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-white group-hover:text-cyan-100 transition-colors">{item.socData.companyName}</div>
+                      <div className="text-xs text-slate-500 font-mono mt-0.5">{item.socData.cnpj}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-300">
+                      {isEditing ? (
+                        <div className="flex items-center">
+                          <input 
+                            type="number"
+                            min="0"
+                            className="w-20 p-1.5 bg-slate-950 border border-cyan-500 rounded-lg focus:outline-none focus:ring-1 focus:ring-cyan-400 text-right text-white font-mono"
+                            value={editValue}
+                            onChange={(e) => setEditValue(parseInt(e.target.value) || 0)}
+                            onKeyDown={(e) => {
+                              if(e.key === 'Enter') saveEditing(e as any);
+                              if(e.key === 'Escape') cancelEditing(e as any);
+                            }}
+                            onClick={(e) => e.stopPropagation()}
+                            autoFocus
+                          />
+                        </div>
+                      ) : (
+                        <span className="font-mono">{item.socData.activeEmployees}</span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`text-xs font-mono px-2 py-1 rounded border ${
+                        item.pricingRule 
+                          ? 'bg-indigo-500/10 text-indigo-300 border-indigo-500/20' 
+                          : 'bg-slate-800 text-slate-500 border-slate-700'
+                      }`}>
+                        {getRuleLabel(item.pricingRule?.model)}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-xs text-slate-400 max-w-[200px] truncate opacity-80">
+                       {/* Short preview, full details in expanded row */}
+                      {item.details}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-slate-200 tracking-wide">
+                      {item.calculatedAmount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                      {isEditing ? (
+                         <div className="flex justify-center items-center space-x-2">
+                          <button 
+                            onClick={(e) => saveEditing(e)}
+                            className="p-2 bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 rounded-lg transition-colors border border-emerald-500/30"
+                            title="Salvar"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                          </button>
+                          <button 
+                            onClick={(e) => cancelEditing(e)}
+                            className="p-2 bg-slate-700/50 text-slate-400 hover:bg-slate-700 rounded-lg transition-colors border border-slate-600"
+                            title="Cancelar"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex justify-center items-center space-x-3 opacity-60 group-hover:opacity-100 transition-opacity">
+                           <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              const cleanCnpj = item.socData.cnpj.replace(/[^\d]/g, '');
+                              window.open(`https://app.omie.com.br/b2b/painel/?cnpj=${cleanCnpj}`, '_blank');
+                            }}
+                            className="text-slate-400 hover:text-indigo-400 transition-colors"
+                            title="Link para Omie"
+                          >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                          </button>
+                          <button 
+                            onClick={(e) => startEditing(e, item)}
+                            className="text-slate-400 hover:text-cyan-400 transition-colors"
+                            title="Editar"
+                          >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                          </button>
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if(window.confirm(`Tem certeza que deseja excluir ${item.socData.companyName}?`)) {
+                                onDelete(item.socData.cnpj);
+                              }
+                            }}
+                            className="text-slate-400 hover:text-rose-400 transition-colors"
+                            title="Excluir"
+                          >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                          </button>
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                  
+                  {/* Expanded Detail Row */}
+                  <tr className="border-0">
+                    <td colSpan={7} className="p-0 border-0">
+                      <div 
+                        className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${
+                          isExpanded ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
+                        }`}
+                      >
+                        <div className="overflow-hidden">
+                          <div className={`p-4 pl-14 pr-8 text-sm border-b border-slate-800/50 bg-slate-900/30 flex items-start gap-4 ${isExpanded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}>
+                            <div className={`p-2 rounded-lg shrink-0 ${item.status === 'READY' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}`}>
+                              {item.status === 'READY' ? (
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                              ) : (
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                              )}
+                            </div>
+                            <div className="space-y-1">
+                              <span className="block font-medium text-slate-200">
+                                {item.status === 'READY' ? 'Detalhes do Cálculo' : 'Erro na Conciliação'}
+                              </span>
+                              <p className="text-slate-400 leading-relaxed">
+                                {item.details}
+                              </p>
+                              {item.pricingRule && (
+                                <div className="mt-2 pt-2 border-t border-slate-700/50 text-xs text-slate-500 flex gap-4">
+                                  <span>Base: <strong>{item.pricingRule.basePrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</strong></span>
+                                  {item.pricingRule.excessPrice && <span>Excedente: <strong>{item.pricingRule.excessPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</strong></span>}
+                                  {item.pricingRule.includedEmployees && <span>Incluídos: <strong>{item.pricingRule.includedEmployees}</strong></span>}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                    ) : (
-                      <div className="flex justify-center items-center space-x-3 opacity-60 group-hover:opacity-100 transition-opacity">
-                        <button
-                          onClick={() => {
-                            const cleanCnpj = item.socData.cnpj.replace(/[^\d]/g, '');
-                            window.open(`https://app.omie.com.br/b2b/painel/?cnpj=${cleanCnpj}`, '_blank');
-                          }}
-                          className="text-slate-400 hover:text-indigo-400 transition-colors"
-                          title="Link para Omie"
-                        >
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
-                        </button>
-                        <button 
-                          onClick={() => startEditing(item)}
-                          className="text-slate-400 hover:text-cyan-400 transition-colors"
-                          title="Editar"
-                        >
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
-                        </button>
-                        <button 
-                          onClick={() => {
-                            if(window.confirm(`Tem certeza que deseja excluir ${item.socData.companyName}?`)) {
-                              onDelete(item.socData.cnpj);
-                            }
-                          }}
-                          className="text-slate-400 hover:text-rose-400 transition-colors"
-                          title="Excluir"
-                        >
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                        </button>
-                      </div>
-                    )}
-                  </td>
-                </tr>
+                    </td>
+                  </tr>
+                </Fragment>
               );
             })}
             
