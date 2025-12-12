@@ -245,7 +245,7 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ results, onDelete, onUpdate
         </div>
       </div>
 
-      <div className="overflow-x-auto [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-800 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:hover:bg-slate-600">
+      <div className="overflow-x-visible">
         <table className="min-w-full divide-y divide-white/5">
           <thead className="bg-[#02040a]">
             <tr>
@@ -286,7 +286,7 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ results, onDelete, onUpdate
                     <td className="absolute left-0 top-0 bottom-0 w-[3px] transition-colors duration-300"
                       style={{ backgroundColor: hasError ? '#f43f5e' : (isExpanded ? '#22d3ee' : 'transparent') }} />
 
-                    <td className="px-6 py-5 whitespace-nowrap">
+                    <td className="px-4 py-5">
                       <div className="flex items-center gap-4">
                         {/* Chevron Icon */}
                         <div className={`transition-transform duration-300 text-slate-600 ${isExpanded ? 'rotate-180 text-cyan-400' : 'rotate-0 group-hover:text-slate-400'}`}>
@@ -295,7 +295,7 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ results, onDelete, onUpdate
                         <StatusBadge status={item.status} />
                       </div>
                     </td>
-                    <td className="px-6 py-5 whitespace-nowrap">
+                    <td className="px-4 py-5">
                       <div className={`text-sm font-medium transition-colors ${hasError ? 'text-rose-200' : 'text-slate-200 group-hover:text-cyan-200'}`}>{item.socData.companyName}</div>
                       <div
                         className="text-[11px] text-slate-600 font-mono mt-1 tracking-wide cursor-help w-fit hover:text-cyan-400 transition-colors"
@@ -304,7 +304,7 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ results, onDelete, onUpdate
                         {item.socData.cnpj}
                       </div>
                     </td>
-                    <td className="px-6 py-5 whitespace-nowrap text-sm text-slate-300">
+                    <td className="px-4 py-5 text-sm text-slate-300">
                       {isEditing ? (
                         <div className="flex items-center">
                           <input
@@ -329,21 +329,21 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ results, onDelete, onUpdate
                         <span className="font-mono text-slate-300 group-hover:text-white transition-colors">{item.socData.activeEmployees}</span>
                       )}
                     </td>
-                    <td className="px-6 py-5 whitespace-nowrap">
+                    <td className="px-4 py-5">
                       <span className={`text-[10px] font-mono px-2 py-1 rounded border uppercase tracking-wide ${item.pricingRule
-                        ? 'bg-indigo-950/20 text-indigo-300 border-indigo-500/20'
-                        : 'bg-slate-900 text-slate-600 border-slate-800'
+                          ? 'bg-indigo-950/20 text-indigo-300 border-indigo-500/20'
+                          : 'bg-slate-900 text-slate-600 border-slate-800'
                         }`}>
                         {getRuleLabel(item.pricingRule?.model)}
                       </span>
                     </td>
-                    <td className="px-6 py-5 whitespace-normal break-words text-xs text-slate-300 group-hover:text-slate-200 transition-colors">
+                    <td className="px-4 py-5 whitespace-normal break-words text-xs text-slate-300 group-hover:text-slate-200 transition-colors">
                       {item.details}
                     </td>
-                    <td className="px-6 py-5 whitespace-nowrap text-right text-sm font-bold text-slate-200 tracking-wide font-mono">
+                    <td className="px-4 py-5 w-24 text-right text-sm font-bold text-slate-200 tracking-wide font-mono">
                       {item.calculatedAmount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                     </td>
-                    <td className="px-6 py-5 whitespace-nowrap text-center text-sm font-medium">
+                    <td className="px-4 py-5 w-28 text-center text-sm font-medium">
                       {isEditing ? (
                         <div className="flex justify-center items-center space-x-2">
                           <button
