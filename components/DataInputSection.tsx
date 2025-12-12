@@ -42,7 +42,7 @@ const DataInputSection: React.FC<DataInputSectionProps> = ({ onDataLoaded }) => 
 
     // Process Pricing
     const pricingLines = pricingText.trim().split('\n');
-    const pricingData: PricingRule[] = pricingLines.map(line => {
+    const pricingData = pricingLines.map(line => {
       const [cnpj, model, basePrice, includedEmployees, excessPrice, minEmployees] = line.split(',');
       if (!cnpj) return null;
       return {
@@ -53,7 +53,7 @@ const DataInputSection: React.FC<DataInputSectionProps> = ({ onDataLoaded }) => 
         excessPrice: parseFloat(excessPrice || '0'),
         minEmployees: parseFloat(minEmployees || '0')
       };
-    }).filter((x): x is PricingRule => x !== null);
+    }).filter(Boolean) as PricingRule[];
 
     onDataLoaded(socData, pricingData);
   };
@@ -65,7 +65,7 @@ const DataInputSection: React.FC<DataInputSectionProps> = ({ onDataLoaded }) => 
       const firstSheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[firstSheetName];
       const csv = utils.sheet_to_csv(worksheet);
-      
+
       if (activeTab === 'soc') {
         setSocText(csv);
       } else {
@@ -104,7 +104,7 @@ const DataInputSection: React.FC<DataInputSectionProps> = ({ onDataLoaded }) => 
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-bold text-white tracking-wide">1. Importação</h2>
         <div className="flex gap-2">
-           <button 
+          <button
             onClick={loadDemoData}
             className="text-xs text-slate-400 hover:text-white font-medium transition-colors border border-slate-600 px-3 py-1.5 rounded-full hover:bg-slate-700"
           >
@@ -115,21 +115,19 @@ const DataInputSection: React.FC<DataInputSectionProps> = ({ onDataLoaded }) => 
 
       <div className="flex p-1 mb-6 bg-slate-950 rounded-xl border border-slate-800 shrink-0">
         <button
-          className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${
-            activeTab === 'soc' 
-              ? 'bg-slate-800 text-white shadow-md ring-1 ring-slate-700' 
+          className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${activeTab === 'soc'
+              ? 'bg-slate-800 text-white shadow-md ring-1 ring-slate-700'
               : 'text-slate-500 hover:text-slate-300'
-          }`}
+            }`}
           onClick={() => setActiveTab('soc')}
         >
           SOC (Ativos)
         </button>
         <button
-          className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${
-            activeTab === 'pricing' 
-              ? 'bg-slate-800 text-white shadow-md ring-1 ring-slate-700' 
+          className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${activeTab === 'pricing'
+              ? 'bg-slate-800 text-white shadow-md ring-1 ring-slate-700'
               : 'text-slate-500 hover:text-slate-300'
-          }`}
+            }`}
           onClick={() => setActiveTab('pricing')}
         >
           Contratos (Omie)
@@ -137,48 +135,47 @@ const DataInputSection: React.FC<DataInputSectionProps> = ({ onDataLoaded }) => 
       </div>
 
       <div className="flex flex-col space-y-4 mb-6">
-        
+
         {/* Drop Zone */}
-        <div 
-          className={`relative group border-2 border-dashed rounded-2xl p-6 text-center transition-all cursor-pointer ${
-            isDragging 
-              ? 'border-cyan-400 bg-cyan-900/10' 
+        <div
+          className={`relative group border-2 border-dashed rounded-2xl p-6 text-center transition-all cursor-pointer ${isDragging
+              ? 'border-cyan-400 bg-cyan-900/10'
               : 'border-slate-700 hover:border-cyan-500/50 hover:bg-slate-800/30'
-          }`}
+            }`}
           onDragOver={onDragOver}
           onDragLeave={onDragLeave}
           onDrop={onDrop}
           onClick={() => fileInputRef.current?.click()}
         >
-          <input 
-            type="file" 
-            ref={fileInputRef} 
-            className="hidden" 
-            accept=".csv, .xlsx, .xls" 
-            onChange={onFileInputChange} 
+          <input
+            type="file"
+            ref={fileInputRef}
+            className="hidden"
+            accept=".csv, .xlsx, .xls"
+            onChange={onFileInputChange}
           />
-          
+
           <div className="flex flex-col items-center gap-3">
-             <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${isDragging ? 'bg-cyan-500 text-white' : 'bg-slate-800 text-cyan-400 group-hover:scale-110 group-hover:bg-slate-700'}`}>
-               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
-             </div>
-             <div>
-               <p className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">
-                 Clique para enviar ou arraste aqui
-               </p>
-               <p className="text-xs text-slate-500 mt-1">
-                 Suporta Excel (.xlsx) e CSV
-               </p>
-             </div>
+            <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${isDragging ? 'bg-cyan-500 text-white' : 'bg-slate-800 text-cyan-400 group-hover:scale-110 group-hover:bg-slate-700'}`}>
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
+            </div>
+            <div>
+              <p className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">
+                Clique para enviar ou arraste aqui
+              </p>
+              <p className="text-xs text-slate-500 mt-1">
+                Suporta Excel (.xlsx) e CSV
+              </p>
+            </div>
           </div>
         </div>
 
         {/* Text Area (Preview/Edit) */}
         <div className="relative animate-fadeIn">
           <div className="absolute top-3 right-3 z-10">
-             <span className="text-[10px] font-mono text-slate-500 bg-slate-900/80 px-2 py-1 rounded border border-slate-800">
-               {activeTab === 'soc' ? 'CNPJ, Nome, Ativos' : 'CNPJ, Regra, Preços...'}
-             </span>
+            <span className="text-[10px] font-mono text-slate-500 bg-slate-900/80 px-2 py-1 rounded border border-slate-800">
+              {activeTab === 'soc' ? 'CNPJ, Nome, Ativos' : 'CNPJ, Regra, Preços...'}
+            </span>
           </div>
           <textarea
             className="w-full min-h-[150px] p-4 bg-slate-950 border border-slate-800 rounded-2xl font-mono text-xs md:text-sm text-slate-300 focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 transition-all outline-none resize-none placeholder-slate-700"

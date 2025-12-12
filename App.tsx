@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import DataInputSection from './components/DataInputSection';
 import ResultsTable from './components/ResultsTable';
 import { BillingResult, PricingRule, SocData } from './types';
