@@ -332,7 +332,7 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ results, onDelete, onUpdate
                         {getRuleLabel(item.pricingRule?.model)}
                       </span>
                     </td>
-                    <td className="px-6 py-5 whitespace-nowrap text-xs text-slate-500 max-w-[200px] truncate group-hover:text-slate-400 transition-colors">
+                    <td className="px-6 py-5 whitespace-normal break-words text-xs text-slate-300 group-hover:text-slate-200 transition-colors">
                       {item.details}
                     </td>
                     <td className="px-6 py-5 whitespace-nowrap text-right text-sm font-bold text-slate-200 tracking-wide font-mono">
