@@ -11,7 +11,7 @@ const DataInputSection: React.FC<DataInputSectionProps> = ({ onDataLoaded }) => 
   const [socText, setSocText] = useState('');
   const [pricingText, setPricingText] = useState('');
   const [isDragging, setIsDragging] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const loadDemoData = () => {
     const demoSoc = `12.345.678/0001-90,Empresa Alpha Ltda,4
@@ -116,8 +116,8 @@ const DataInputSection: React.FC<DataInputSectionProps> = ({ onDataLoaded }) => 
       <div className="flex p-1 mb-6 bg-slate-950 rounded-xl border border-slate-800 shrink-0">
         <button
           className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${activeTab === 'soc'
-              ? 'bg-slate-800 text-white shadow-md ring-1 ring-slate-700'
-              : 'text-slate-500 hover:text-slate-300'
+            ? 'bg-slate-800 text-white shadow-md ring-1 ring-slate-700'
+            : 'text-slate-500 hover:text-slate-300'
             }`}
           onClick={() => setActiveTab('soc')}
         >
@@ -125,8 +125,8 @@ const DataInputSection: React.FC<DataInputSectionProps> = ({ onDataLoaded }) => 
         </button>
         <button
           className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${activeTab === 'pricing'
-              ? 'bg-slate-800 text-white shadow-md ring-1 ring-slate-700'
-              : 'text-slate-500 hover:text-slate-300'
+            ? 'bg-slate-800 text-white shadow-md ring-1 ring-slate-700'
+            : 'text-slate-500 hover:text-slate-300'
             }`}
           onClick={() => setActiveTab('pricing')}
         >
@@ -139,8 +139,8 @@ const DataInputSection: React.FC<DataInputSectionProps> = ({ onDataLoaded }) => 
         {/* Drop Zone */}
         <div
           className={`relative group border-2 border-dashed rounded-2xl p-6 text-center transition-all cursor-pointer ${isDragging
-              ? 'border-cyan-400 bg-cyan-900/10'
-              : 'border-slate-700 hover:border-cyan-500/50 hover:bg-slate-800/30'
+            ? 'border-cyan-400 bg-cyan-900/10'
+            : 'border-slate-700 hover:border-cyan-500/50 hover:bg-slate-800/30'
             }`}
           onDragOver={onDragOver}
           onDragLeave={onDragLeave}
@@ -153,6 +153,7 @@ const DataInputSection: React.FC<DataInputSectionProps> = ({ onDataLoaded }) => 
             className="hidden"
             accept=".csv, .xlsx, .xls"
             onChange={onFileInputChange}
+            title="Upload file"
           />
 
           <div className="flex flex-col items-center gap-3">
