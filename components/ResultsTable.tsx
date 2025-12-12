@@ -22,14 +22,13 @@ const getRuleLabel = (model?: string) => {
 
 const StatusBadge = ({ status }: { status: string }) => {
   const isReady = status === 'READY';
-  
+
   return (
     <div className="flex items-center w-fit">
-      <span className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all border shadow-[0_0_10px_rgba(0,0,0,0.2)] ${
-        isReady 
-          ? 'bg-emerald-950/30 text-emerald-400 border-emerald-500/30 shadow-emerald-900/20' 
-          : 'bg-rose-950/30 text-rose-400 border-rose-500/30 shadow-rose-900/20'
-      }`}>
+      <span className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all border shadow-[0_0_10px_rgba(0,0,0,0.2)] ${isReady
+        ? 'bg-emerald-950/30 text-emerald-400 border-emerald-500/30 shadow-emerald-900/20'
+        : 'bg-rose-950/30 text-rose-400 border-rose-500/30 shadow-rose-900/20'
+        }`}>
         <span className={`w-1.5 h-1.5 rounded-full mr-2 ${isReady ? 'bg-emerald-400 animate-pulse' : 'bg-rose-400'}`}></span>
         {isReady ? 'Pronto' : 'Erro'}
       </span>
@@ -42,7 +41,7 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ results, onDelete, onUpdate
   const [statusFilter, setStatusFilter] = useState<'ALL' | 'READY' | 'ERROR'>('ALL');
   const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: SortDirection }>({
     key: 'status',
-    direction: 'asc' 
+    direction: 'asc'
   });
 
   // State for inline editing
@@ -90,7 +89,7 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ results, onDelete, onUpdate
     // 1. Filtering
     if (searchTerm) {
       const lowerTerm = searchTerm.toLowerCase();
-      data = data.filter(item => 
+      data = data.filter(item =>
         item.socData.companyName.toLowerCase().includes(lowerTerm) ||
         item.socData.cnpj.includes(lowerTerm)
       );
@@ -165,7 +164,7 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ results, onDelete, onUpdate
     const isAsc = sortConfig.direction === 'asc';
 
     return (
-      <th 
+      <th
         className={`px-6 py-5 ${align === 'right' ? 'text-right' : 'text-left'} text-[11px] font-bold text-slate-500 uppercase tracking-[0.1em] cursor-pointer hover:text-cyan-400 transition-colors select-none group border-b border-white/5`}
         onClick={() => handleSort(sortKey)}
       >
@@ -173,11 +172,11 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ results, onDelete, onUpdate
           {label}
           <span className="flex flex-col justify-center h-4 w-4">
             {isSorted ? (
-               isAsc ? (
-                 <svg className="w-3 h-3 text-cyan-400 drop-shadow-[0_0_5px_rgba(34,211,238,0.5)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" /></svg>
-               ) : (
-                 <svg className="w-3 h-3 text-cyan-400 drop-shadow-[0_0_5px_rgba(34,211,238,0.5)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-               )
+              isAsc ? (
+                <svg className="w-3 h-3 text-cyan-400 drop-shadow-[0_0_5px_rgba(34,211,238,0.5)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" /></svg>
+              ) : (
+                <svg className="w-3 h-3 text-cyan-400 drop-shadow-[0_0_5px_rgba(34,211,238,0.5)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+              )
             ) : (
               <svg className="w-3 h-3 text-slate-700 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" /></svg>
             )}
@@ -194,30 +193,30 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ results, onDelete, onUpdate
       {/* Toolbar */}
       <div className="px-6 py-6 border-b border-white/5 bg-[#030712]/50 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-           <h2 className="text-lg font-bold text-white tracking-wide flex items-center gap-2">
-             <span className="w-1 h-5 bg-gradient-to-b from-cyan-400 to-blue-600 rounded-full"></span>
-             Conciliação
-           </h2>
-           <p className="text-xs text-slate-500 mt-1 font-mono pl-3">
-             {processedResults.length} registros processados
-           </p>
+          <h2 className="text-lg font-bold text-white tracking-wide flex items-center gap-2">
+            <span className="w-1 h-5 bg-gradient-to-b from-cyan-400 to-blue-600 rounded-full"></span>
+            Conciliação
+          </h2>
+          <p className="text-xs text-slate-500 mt-1 font-mono pl-3">
+            {processedResults.length} registros processados
+          </p>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3">
           {/* Search Input */}
           <div className="relative group">
-             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-               <svg className="h-4 w-4 text-slate-600 group-focus-within:text-cyan-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-               </svg>
-             </div>
-             <input
-               type="text"
-               className="pl-9 pr-4 py-2 bg-[#0a0a0a] border border-white/10 rounded-xl text-sm text-slate-200 focus:ring-1 focus:ring-cyan-500/50 focus:border-cyan-500/50 w-full sm:w-64 outline-none transition-all placeholder-slate-700 hover:border-white/20"
-               placeholder="Buscar empresa ou CNPJ..."
-               value={searchTerm}
-               onChange={(e) => setSearchTerm(e.target.value)}
-             />
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg className="h-4 w-4 text-slate-600 group-focus-within:text-cyan-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <input
+              type="text"
+              className="pl-9 pr-4 py-2 bg-[#0a0a0a] border border-white/10 rounded-xl text-sm text-slate-200 focus:ring-1 focus:ring-cyan-500/50 focus:border-cyan-500/50 w-full sm:w-64 outline-none transition-all placeholder-slate-700 hover:border-white/20"
+              placeholder="Buscar empresa ou CNPJ..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </div>
 
           {/* Status Filter */}
@@ -225,6 +224,9 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ results, onDelete, onUpdate
             className="pl-3 pr-8 py-2 bg-[#0a0a0a] border border-white/10 rounded-xl text-sm text-slate-300 focus:ring-1 focus:ring-cyan-500/50 focus:border-cyan-500/50 outline-none cursor-pointer hover:bg-white/5 transition-colors appearance-none"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value as any)}
+            aria-label="Filtrar por status"
+            title="Filtrar por status"
+            name="statusFilter"
           >
             <option value="ALL">Todos</option>
             <option value="READY">Prontos</option>
@@ -268,25 +270,25 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ results, onDelete, onUpdate
               const isExpanded = expandedRows.has(item.socData.cnpj);
               const rowId = item.socData.cnpj;
               const hasError = item.status !== 'READY';
-              
+
               return (
                 <Fragment key={`${rowId}-${idx}`}>
-                  <tr 
+                  <tr
                     onClick={() => toggleRow(rowId)}
                     className={`group transition-all duration-300 cursor-pointer last:border-0 relative
                       ${isExpanded ? 'bg-white/[0.03]' : ''}
-                      ${hasError 
-                          ? 'hover:bg-rose-950/10' 
-                          : 'hover:bg-cyan-900/5'}
+                      ${hasError
+                        ? 'hover:bg-rose-950/10'
+                        : 'hover:bg-cyan-900/5'}
                     `}
                   >
-                     {/* Border Indicator for Error/Active */}
-                    <td className="absolute left-0 top-0 bottom-0 w-[3px] transition-colors duration-300" 
-                        style={{ backgroundColor: hasError ? '#f43f5e' : (isExpanded ? '#22d3ee' : 'transparent') }} />
+                    {/* Border Indicator for Error/Active */}
+                    <td className="absolute left-0 top-0 bottom-0 w-[3px] transition-colors duration-300"
+                      style={{ backgroundColor: hasError ? '#f43f5e' : (isExpanded ? '#22d3ee' : 'transparent') }} />
 
                     <td className="px-6 py-5 whitespace-nowrap">
                       <div className="flex items-center gap-4">
-                         {/* Chevron Icon */}
+                        {/* Chevron Icon */}
                         <div className={`transition-transform duration-300 text-slate-600 ${isExpanded ? 'rotate-180 text-cyan-400' : 'rotate-0 group-hover:text-slate-400'}`}>
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                         </div>
@@ -295,7 +297,7 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ results, onDelete, onUpdate
                     </td>
                     <td className="px-6 py-5 whitespace-nowrap">
                       <div className={`text-sm font-medium transition-colors ${hasError ? 'text-rose-200' : 'text-slate-200 group-hover:text-cyan-200'}`}>{item.socData.companyName}</div>
-                      <div 
+                      <div
                         className="text-[11px] text-slate-600 font-mono mt-1 tracking-wide cursor-help w-fit hover:text-cyan-400 transition-colors"
                         title={item.socData.companyName}
                       >
@@ -305,15 +307,19 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ results, onDelete, onUpdate
                     <td className="px-6 py-5 whitespace-nowrap text-sm text-slate-300">
                       {isEditing ? (
                         <div className="flex items-center">
-                          <input 
+                          <input
                             type="number"
                             min="0"
                             className="w-20 p-2 bg-slate-950 border border-cyan-500/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500/20 text-right text-white font-mono text-sm shadow-[0_0_15px_rgba(34,211,238,0.1)]"
+                            aria-label={`Editar ativos de ${item.socData.companyName}`}
+                            title={`Editar ativos de ${item.socData.companyName}`}
+                            placeholder="Ativos"
+                            inputMode="numeric"
                             value={editValue}
                             onChange={(e) => setEditValue(parseInt(e.target.value) || 0)}
                             onKeyDown={(e) => {
-                              if(e.key === 'Enter') saveEditing(e as any);
-                              if(e.key === 'Escape') cancelEditing(e as any);
+                              if (e.key === 'Enter') saveEditing(e as any);
+                              if (e.key === 'Escape') cancelEditing(e as any);
                             }}
                             onClick={(e) => e.stopPropagation()}
                             autoFocus
@@ -324,11 +330,10 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ results, onDelete, onUpdate
                       )}
                     </td>
                     <td className="px-6 py-5 whitespace-nowrap">
-                      <span className={`text-[10px] font-mono px-2 py-1 rounded border uppercase tracking-wide ${
-                        item.pricingRule 
-                          ? 'bg-indigo-950/20 text-indigo-300 border-indigo-500/20' 
-                          : 'bg-slate-900 text-slate-600 border-slate-800'
-                      }`}>
+                      <span className={`text-[10px] font-mono px-2 py-1 rounded border uppercase tracking-wide ${item.pricingRule
+                        ? 'bg-indigo-950/20 text-indigo-300 border-indigo-500/20'
+                        : 'bg-slate-900 text-slate-600 border-slate-800'
+                        }`}>
                         {getRuleLabel(item.pricingRule?.model)}
                       </span>
                     </td>
@@ -340,15 +345,15 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ results, onDelete, onUpdate
                     </td>
                     <td className="px-6 py-5 whitespace-nowrap text-center text-sm font-medium">
                       {isEditing ? (
-                         <div className="flex justify-center items-center space-x-2">
-                          <button 
+                        <div className="flex justify-center items-center space-x-2">
+                          <button
                             onClick={(e) => saveEditing(e)}
                             className="p-2 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 rounded-lg transition-colors border border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.1)]"
                             title="Salvar"
                           >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                           </button>
-                          <button 
+                          <button
                             onClick={(e) => cancelEditing(e)}
                             className="p-2 bg-slate-800 text-slate-400 hover:bg-slate-700 rounded-lg transition-colors border border-slate-700"
                             title="Cancelar"
@@ -358,7 +363,7 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ results, onDelete, onUpdate
                         </div>
                       ) : (
                         <div className="flex justify-center items-center space-x-3 opacity-40 group-hover:opacity-100 transition-all duration-300">
-                           <button
+                          <button
                             onClick={(e) => {
                               e.stopPropagation();
                               const cleanCnpj = item.socData.cnpj.replace(/[^\d]/g, '');
@@ -369,17 +374,17 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ results, onDelete, onUpdate
                           >
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
                           </button>
-                          <button 
+                          <button
                             onClick={(e) => startEditing(e, item)}
                             className="text-slate-400 hover:text-cyan-400 transition-colors hover:scale-110 transform"
                             title="Editar"
                           >
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                           </button>
-                          <button 
+                          <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              if(window.confirm(`Tem certeza que deseja excluir ${item.socData.companyName}?`)) {
+                              if (window.confirm(`Tem certeza que deseja excluir ${item.socData.companyName}?`)) {
                                 onDelete(item.socData.cnpj);
                               }
                             }}
@@ -392,14 +397,13 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ results, onDelete, onUpdate
                       )}
                     </td>
                   </tr>
-                  
+
                   {/* Expanded Detail Row */}
                   <tr className="border-0">
                     <td colSpan={7} className="p-0 border-0">
-                      <div 
-                        className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${
-                          isExpanded ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
-                        }`}
+                      <div
+                        className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${isExpanded ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
+                          }`}
                       >
                         <div className="overflow-hidden bg-[#050b14]">
                           <div className={`p-6 pl-14 pr-8 text-sm border-b border-white/5 bg-gradient-to-r from-slate-900/50 to-transparent flex items-start gap-5 ${isExpanded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}>
@@ -442,7 +446,7 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ results, onDelete, onUpdate
                                       <span className="text-white text-sm">{item.pricingRule.includedEmployees}</span>
                                     </div>
                                   )}
-                                   {item.pricingRule.minEmployees && (
+                                  {item.pricingRule.minEmployees && (
                                     <div className="flex flex-col">
                                       <span className="text-slate-600 mb-1 uppercase tracking-wider text-[10px]">Mínimo Vidas</span>
                                       <span className="text-white text-sm">{item.pricingRule.minEmployees}</span>
@@ -459,7 +463,7 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ results, onDelete, onUpdate
                 </Fragment>
               );
             })}
-            
+
             {processedResults.length === 0 && (
               <tr>
                 <td colSpan={7} className="px-6 py-24 text-center text-slate-600">
