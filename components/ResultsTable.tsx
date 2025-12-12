@@ -327,6 +327,16 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ results, onDelete, onUpdate
                       </div>
                     ) : (
                       <div className="flex justify-center items-center space-x-3 opacity-60 group-hover:opacity-100 transition-opacity">
+                        <button
+                          onClick={() => {
+                            const cleanCnpj = item.socData.cnpj.replace(/[^\d]/g, '');
+                            window.open(`https://app.omie.com.br/b2b/painel/?cnpj=${cleanCnpj}`, '_blank');
+                          }}
+                          className="text-slate-400 hover:text-indigo-400 transition-colors"
+                          title="Link para Omie"
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                        </button>
                         <button 
                           onClick={() => startEditing(item)}
                           className="text-slate-400 hover:text-cyan-400 transition-colors"
