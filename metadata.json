@@ -1,0 +1,5 @@
+{
+  "name": "BillingMaster Reconciler",
+  "description": "A system to automate the reconciliation of SOC employee data with pricing contracts for Omie billing.",
+  "requestFramePermissions": []
+}
