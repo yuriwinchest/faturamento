@@ -295,7 +295,12 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ results, onDelete, onUpdate
                     </td>
                     <td className="px-6 py-5 whitespace-nowrap">
                       <div className={`text-sm font-medium transition-colors ${hasError ? 'text-rose-200' : 'text-slate-200 group-hover:text-cyan-200'}`}>{item.socData.companyName}</div>
-                      <div className="text-[11px] text-slate-600 font-mono mt-1 tracking-wide">{item.socData.cnpj}</div>
+                      <div 
+                        className="text-[11px] text-slate-600 font-mono mt-1 tracking-wide cursor-help w-fit hover:text-cyan-400 transition-colors"
+                        title={item.socData.companyName}
+                      >
+                        {item.socData.cnpj}
+                      </div>
                     </td>
                     <td className="px-6 py-5 whitespace-nowrap text-sm text-slate-300">
                       {isEditing ? (
