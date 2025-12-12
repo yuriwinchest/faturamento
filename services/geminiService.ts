@@ -1,7 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 import { BillingResult } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 export const analyzeBilling = async (results: BillingResult[]): Promise<string> => {
   try {
