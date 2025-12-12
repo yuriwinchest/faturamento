@@ -67,22 +67,34 @@ function App() {
             <p className="text-slate-400 font-light tracking-wide">Conciliação Inteligente <span className="text-cyan-400 font-medium">SOC</span> + <span className="text-indigo-400 font-medium">Omie</span></p>
           </div>
 
-          {results.length > 0 && (
-            <div className="flex gap-4">
-              <div className="bg-slate-900/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-4 min-w-[140px] hover:border-slate-600 transition-colors group">
-                <span className="text-[10px] text-slate-500 uppercase tracking-wider font-bold group-hover:text-cyan-400 transition-colors">Faturamento</span>
-                <div className="text-2xl font-bold text-white mt-1 drop-shadow-sm">{totalRevenue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</div>
+          <div className="flex items-center gap-4">
+            {results.length > 0 && (
+              <div className="flex gap-4">
+                <div className="bg-slate-900/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-4 min-w-[140px] hover:border-slate-600 transition-colors group">
+                  <span className="text-[10px] text-slate-500 uppercase tracking-wider font-bold group-hover:text-cyan-400 transition-colors">Faturamento</span>
+                  <div className="text-2xl font-bold text-white mt-1 drop-shadow-sm">{totalRevenue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</div>
+                </div>
+                <div className="bg-slate-900/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-4 min-w-[100px] hover:border-slate-600 transition-colors group">
+                  <span className="text-[10px] text-slate-500 uppercase tracking-wider font-bold group-hover:text-emerald-400 transition-colors">Processados</span>
+                  <div className="text-2xl font-bold text-slate-200 mt-1">{readyCount}</div>
+                </div>
+                <div className="bg-slate-900/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-4 min-w-[100px] hover:border-slate-600 transition-colors group">
+                  <span className="text-[10px] text-slate-500 uppercase tracking-wider font-bold group-hover:text-rose-400 transition-colors">Pendentes</span>
+                  <div className="text-2xl font-bold text-rose-400 mt-1">{errorCount}</div>
+                </div>
               </div>
-              <div className="bg-slate-900/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-4 min-w-[100px] hover:border-slate-600 transition-colors group">
-                <span className="text-[10px] text-slate-500 uppercase tracking-wider font-bold group-hover:text-emerald-400 transition-colors">Processados</span>
-                <div className="text-2xl font-bold text-slate-200 mt-1">{readyCount}</div>
-              </div>
-              <div className="bg-slate-900/50 backdrop-blur-md border border-slate-700/50 rounded-2xl p-4 min-w-[100px] hover:border-slate-600 transition-colors group">
-                <span className="text-[10px] text-slate-500 uppercase tracking-wider font-bold group-hover:text-rose-400 transition-colors">Pendentes</span>
-                <div className="text-2xl font-bold text-rose-400 mt-1">{errorCount}</div>
-              </div>
-            </div>
-          )}
+            )}
+            <button
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              className={`px-4 py-2 rounded-xl text-xs font-semibold border transition-all shadow-lg ${sidebarCollapsed
+                  ? 'bg-slate-800 text-white border-slate-600 hover:bg-slate-700'
+                  : 'bg-slate-900 text-slate-300 border-slate-700 hover:bg-slate-800'
+                }`}
+              title={sidebarCollapsed ? 'Expandir lateral' : 'Recolher lateral'}
+            >
+              {sidebarCollapsed ? 'Expandir Lateral' : 'Recolher Lateral'}
+            </button>
+          </div>
         </div>
 
         {/* Main Content Grid */}
@@ -144,8 +156,8 @@ function App() {
                     onClick={generateReport}
                     disabled={isAnalyzing}
                     className={`px-6 py-2.5 rounded-xl text-sm font-semibold transition-all border border-transparent ${isAnalyzing
-                        ? 'bg-slate-800 text-slate-400 cursor-not-allowed'
-                        : 'bg-slate-800 hover:bg-slate-700 text-white border-slate-600 hover:border-slate-500 shadow-lg'
+                      ? 'bg-slate-800 text-slate-400 cursor-not-allowed'
+                      : 'bg-slate-800 hover:bg-slate-700 text-white border-slate-600 hover:border-slate-500 shadow-lg'
                       }`}
                   >
                     {isAnalyzing ? (
@@ -175,19 +187,7 @@ function App() {
           </div>
         </div>
 
-        {/* Sidebar Toggle */}
-        <div className="fixed bottom-6 left-6 z-20">
-          <button
-            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            className={`px-4 py-2 rounded-xl text-xs font-semibold border transition-all shadow-lg ${sidebarCollapsed
-                ? 'bg-slate-800 text-white border-slate-600 hover:bg-slate-700'
-                : 'bg-slate-900 text-slate-300 border-slate-700 hover:bg-slate-800'
-              }`}
-            title={sidebarCollapsed ? 'Expandir menu lateral' : 'Recolher menu lateral'}
-          >
-            {sidebarCollapsed ? 'Expandir Menu' : 'Recolher Menu'}
-          </button>
-        </div>
+
       </div>
     </div>
   );
