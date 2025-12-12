@@ -10,6 +10,15 @@ interface ResultsTableProps {
 type SortKey = 'status' | 'companyName' | 'activeEmployees' | 'calculatedAmount';
 type SortDirection = 'asc' | 'desc';
 
+const getRuleLabel = (model?: string) => {
+  switch (model) {
+    case 'TIERED': return 'Escalonado';
+    case 'PER_HEAD_MIN': return 'Mínimo/Vidas';
+    case 'FLAT': return 'Valor Fixo';
+    default: return '-';
+  }
+};
+
 const StatusBadge = ({ status, details }: { status: string, details: string }) => {
   const isReady = status === 'READY';
   const tooltipText = isReady 
@@ -206,6 +215,9 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ results, onDelete, onUpdate
               <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">
                 Regra
               </th>
+              <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">
+                Detalhes do Cálculo
+              </th>
               <HeaderCell label="Total" sortKey="calculatedAmount" align="right" />
               <th className="px-6 py-4 text-center text-xs font-bold text-slate-400 uppercase tracking-wider">
                 Ações
@@ -252,7 +264,16 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ results, onDelete, onUpdate
                       <span className="font-mono">{item.socData.activeEmployees}</span>
                     )}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-xs text-slate-400 max-w-[200px] truncate" title={item.details}>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`text-xs font-mono px-2 py-1 rounded border ${
+                      item.pricingRule 
+                        ? 'bg-indigo-500/10 text-indigo-300 border-indigo-500/20' 
+                        : 'bg-slate-800 text-slate-500 border-slate-700'
+                    }`}>
+                      {getRuleLabel(item.pricingRule?.model)}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-xs text-slate-400 max-w-[250px] truncate" title={item.details}>
                     {item.details}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-slate-200 tracking-wide">
@@ -305,7 +326,7 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ results, onDelete, onUpdate
             
             {processedResults.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-6 py-16 text-center text-slate-500">
+                <td colSpan={7} className="px-6 py-16 text-center text-slate-500">
                   <div className="flex flex-col items-center justify-center">
                     <svg className="w-12 h-12 text-slate-700 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                     <p>Nenhum resultado encontrado para os filtros.</p>
