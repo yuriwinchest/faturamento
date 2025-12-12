@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { BillingResult } from '../types';
+import { utils, writeFile } from 'xlsx';
 
 interface ResultsTableProps {
   results: BillingResult[];
@@ -135,6 +136,23 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ results, onDelete, onUpdate
     }));
   };
 
+  const exportToCSV = () => {
+    const dataToExport = processedResults.map(item => ({
+      Status: item.status === 'READY' ? 'Pronto' : 'Erro',
+      CNPJ: item.socData.cnpj,
+      Empresa: item.socData.companyName,
+      'Funcionários Ativos': item.socData.activeEmployees,
+      'Modelo de Preço': getRuleLabel(item.pricingRule?.model),
+      'Detalhes do Cálculo': item.details,
+      'Valor Total': item.calculatedAmount
+    }));
+
+    const ws = utils.json_to_sheet(dataToExport);
+    const wb = utils.book_new();
+    utils.book_append_sheet(wb, ws, "Faturamento");
+    writeFile(wb, "conciliacao_faturamento.csv");
+  };
+
   const HeaderCell = ({ label, sortKey, align = 'left' }: { label: string, sortKey: SortKey, align?: 'left' | 'right' }) => {
     const isSorted = sortConfig.key === sortKey;
     const isAsc = sortConfig.direction === 'asc';
@@ -202,6 +220,16 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ results, onDelete, onUpdate
             <option value="READY">Prontos</option>
             <option value="ERROR">Erros</option>
           </select>
+
+          {/* Export Button */}
+          <button
+            onClick={exportToCSV}
+            className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl border border-slate-700 hover:border-slate-600 transition-all font-medium text-sm group"
+            title="Exportar tabela atual para CSV"
+          >
+            <svg className="w-4 h-4 text-slate-400 group-hover:text-cyan-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+            <span className="hidden sm:inline">Exportar CSV</span>
+          </button>
         </div>
       </div>
 
